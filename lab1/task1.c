@@ -14,7 +14,7 @@ typedef struct student {
 #define N2 3
 
 student old_s[N], new_s[N];
-char message[1000010];
+unsigned char message[1000010];
 
 void input(student *x)
 {
@@ -115,11 +115,16 @@ int restore_student(char *buf, int len, student *s)
 
 int main(void)
 {
+	freopen("task1.in", "r", stdin);
 	for (int i = 0; i < 5; ++i) {
 		input(old_s + i);
 	}
 	int n1 = pack_student_bytebybyte(old_s, N1, message);
 	int n2 = pack_student_whole(old_s + N1, N2, message + n1);
+	for (int i = 0; i < 20; ++i) {
+		printf("%02x ", *(message+ i));
+	}
+	putchar('\n');
 	restore_student(message, n1, new_s);
 	restore_student(message + n1, n2, new_s + N1);
 	for (int i = 0; i < N; ++i) {

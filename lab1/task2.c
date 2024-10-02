@@ -1,6 +1,8 @@
+#include <time.h>
 #include <stdio.h>
-#include <limit.h>
+#include <limits.h>
 #include <assert.h>
+#include <stdlib.h>
 
 int negate(int x)
 {
@@ -39,7 +41,7 @@ int isTmax(int x)
 int bitCount(int x)
 {
 	int res = 0;
-	for (i32 i = 0; i < 32; ++i) {
+	for (int i = 0; i < 32; ++i) {
 		if (x >> i & 1) res += 1;
 	}
 
@@ -84,13 +86,21 @@ unsigned int myrand(void)
 	return ret;
 }
 
+void print2(int x)
+{
+	for (int i = 31; i >= 0; --i) {
+		putchar('0' + (x >> i & 1));
+	}
+	putchar('\n');
+}
+
 int main(void)
 {
 	srand(time(NULL));
-	int T = 10;
+	int T = 1;
 	for (int i = 0; i < T; ++i) {
-		x = myrand();
-		y = myrand();
+		int x = myrand();
+		int y = myrand();
 		printf("neg(%d) = %d\n", x, negate(x));
 		printf("abs(%d) = %d\n", x, absVal(x));
 		printf("and(%d, %d) = %d\n", x, y, bitAnd(x, y));
@@ -99,11 +109,17 @@ int main(void)
 		printf("isTmax(%d) = %d\n", INT_MAX, isTmax(INT_MAX));
 		printf("isTmax(%d) = %d\n", x, isTmax(x));
 		printf("bitCount(%d) = %d\n", x, bitCount(x));
-		l = rand() % 32, h = rand() % 32;
-		if (l > h) swap(l, h);
-		printf("bitMask(%d, %d) = ", l, h);
-		print2(bitMask(l, h));
-		printf("addOK(%d, %d) = %d\n", abs(x), abs(y));
+		int l = rand() % 32, h = rand() % 32;
+		if (l > h) {
+			l ^= h;
+			h ^= l;
+			l ^= h;
+		}
+		printf("bitMask(%d, %d) = ", h, l);
+		print2(bitMask(h, l));
+		printf("addOK(%d, %d) = %d\n", abs(x), abs(y), addOK(abs(x), abs(y)));
+		int a = rand() % 4, b = rand() % 4;
+		printf("byteSwap(%x, %d, %d) = %x\n", x, a, b, byteSwap(x, a, b));
 	}
 	return 0;
 }
