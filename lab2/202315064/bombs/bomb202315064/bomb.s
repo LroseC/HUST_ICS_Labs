@@ -472,7 +472,7 @@ Disassembly of section .text:
     15a5:	e8 96 fb ff ff       	call   1140 <__isoc99_sscanf@plt>
     15aa:	83 c4 10             	add    $0x10,%esp
     15ad:	83 f8 01             	cmp    $0x1,%eax
-    15b0:	7e 1a                	jle    15cc <phase_3+0x57>
+    15b0:	7e 1a                	jle    15cc <phase_3+0x57>; explode
     15b2:	83 7c 24 04 07       	cmpl   $0x7,0x4(%esp)
     15b7:	0f 87 93 00 00 00    	ja     1650 <.L37+0x7> ;explode
     15bd:	8b 44 24 04          	mov    0x4(%esp),%eax
@@ -491,7 +491,7 @@ Disassembly of section .text:
     15ec:	2d 3e 01 00 00       	sub    $0x13e,%eax
     15f1:	05 3e 01 00 00       	add    $0x13e,%eax
     15f6:	2d 3e 01 00 00       	sub    $0x13e,%eax
-    15fb:	83 7c 24 04 05       	cmpl   $0x5,0x4(%esp)
+    15fb:	83 7c 24 04 05       	cmpl   $0x5,0x4(%esp) ; first arg > 5
     1600:	7f 06                	jg     1608 <.L26+0x35> ;explode
     1602:	39 44 24 08          	cmp    %eax,0x8(%esp)
     1606:	74 05                	je     160d <.L26+0x3a> ; if not, explode
@@ -530,7 +530,7 @@ Disassembly of section .text:
 00001649 <.L37>:
     1649:	b8 00 00 00 00       	mov    $0x0,%eax
     164e:	eb a6                	jmp    15f6 <.L26+0x23>
-    1650:	e8 2e 05 00 00       	call   1b83 <explode_bomb>
+    1650:	e8 2e 05 00 00       	call   1b83 <explode_bomb> ;default
     1655:	b8 00 00 00 00       	mov    $0x0,%eax
     165a:	eb 9f                	jmp    15fb <.L26+0x28>
     165c:	e8 2f 13 00 00       	call   2990 <__stack_chk_fail_local>
@@ -538,32 +538,32 @@ Disassembly of section .text:
 00001661 <func4>:
     1661:	53                   	push   %ebx
     1662:	83 ec 08             	sub    $0x8,%esp
-    1665:	8b 44 24 10          	mov    0x10(%esp),%eax
-    1669:	8b 4c 24 18          	mov    0x18(%esp),%ecx
-    166d:	89 ca                	mov    %ecx,%edx
-    166f:	2b 54 24 14          	sub    0x14(%esp),%edx
+    1665:	8b 44 24 10          	mov    0x10(%esp),%eax ;arg1 -> eax
+    1669:	8b 4c 24 18          	mov    0x18(%esp),%ecx ;arg3 -> ecx
+    166d:	89 ca                	mov    %ecx,%edx ; -> edx
+    166f:	2b 54 24 14          	sub    0x14(%esp),%edx ; arg3 - arg2 -> edx, len
     1673:	89 d3                	mov    %edx,%ebx
-    1675:	c1 eb 1f             	shr    $0x1f,%ebx
-    1678:	01 d3                	add    %edx,%ebx
-    167a:	d1 fb                	sar    $1,%ebx
-    167c:	03 5c 24 14          	add    0x14(%esp),%ebx
-    1680:	39 c3                	cmp    %eax,%ebx
+    1675:	c1 eb 1f             	shr    $0x1f,%ebx ; get sign dig of edx
+    1678:	01 d3                	add    %edx,%ebx ; remove the sign dig
+    167a:	d1 fb                	sar    $1,%ebx ;ebx = edx / 2
+    167c:	03 5c 24 14          	add    0x14(%esp),%ebx ;ebx += arg2, = edx / 2 + arg2
+    1680:	39 c3                	cmp    %eax,%ebx;
     1682:	7f 09                	jg     168d <func4+0x2c>
     1684:	7c 1f                	jl     16a5 <func4+0x44>
-    1686:	89 d8                	mov    %ebx,%eax
+    1686:	89 d8                	mov    %ebx,%eax; equeal, return ebx
     1688:	83 c4 08             	add    $0x8,%esp
     168b:	5b                   	pop    %ebx
     168c:	c3                   	ret
-    168d:	83 ec 04             	sub    $0x4,%esp
+    168d:	83 ec 04             	sub    $0x4,%esp ; giant
     1690:	8d 53 ff             	lea    -0x1(%ebx),%edx
     1693:	52                   	push   %edx
     1694:	ff 74 24 1c          	push   0x1c(%esp)
     1698:	50                   	push   %eax
     1699:	e8 c3 ff ff ff       	call   1661 <func4>
     169e:	83 c4 10             	add    $0x10,%esp
-    16a1:	01 c3                	add    %eax,%ebx
-    16a3:	eb e1                	jmp    1686 <func4+0x25>
-    16a5:	83 ec 04             	sub    $0x4,%esp
+    16a1:	01 c3                	add    %eax,%ebx ; ebx += ret
+    16a3:	eb e1                	jmp    1686 <func4+0x25> ; -> equal
+    16a5:	83 ec 04             	sub    $0x4,%esp; less
     16a8:	51                   	push   %ecx
     16a9:	8d 53 01             	lea    0x1(%ebx),%edx
     16ac:	52                   	push   %edx
@@ -571,7 +571,7 @@ Disassembly of section .text:
     16ae:	e8 ae ff ff ff       	call   1661 <func4>
     16b3:	83 c4 10             	add    $0x10,%esp
     16b6:	01 c3                	add    %eax,%ebx
-    16b8:	eb cc                	jmp    1686 <func4+0x25>
+    16b8:	eb cc                	jmp    1686 <func4+0x25>; -> equal
 
 000016ba <phase_4>:
     16ba:	53                   	push   %ebx
@@ -593,17 +593,17 @@ Disassembly of section .text:
     16f2:	83 f8 02             	cmp    $0x2,%eax
     16f5:	75 07                	jne    16fe <phase_4+0x44>
     16f7:	83 7c 24 04 0e       	cmpl   $0xe,0x4(%esp)
-    16fc:	76 05                	jbe    1703 <phase_4+0x49>
+    16fc:	76 05                	jbe    1703 <phase_4+0x49> ;unsigned <= 14
     16fe:	e8 80 04 00 00       	call   1b83 <explode_bomb>
     1703:	83 ec 04             	sub    $0x4,%esp
     1706:	6a 0e                	push   $0xe
     1708:	6a 00                	push   $0x0
     170a:	ff 74 24 10          	push   0x10(%esp)
-    170e:	e8 4e ff ff ff       	call   1661 <func4>
+    170e:	e8 4e ff ff ff       	call   1661 <func4> ;func4(arg1, 0, 14)
     1713:	83 c4 10             	add    $0x10,%esp
     1716:	83 f8 07             	cmp    $0x7,%eax
-    1719:	75 07                	jne    1722 <phase_4+0x68>
-    171b:	83 7c 24 08 07       	cmpl   $0x7,0x8(%esp)
+    1719:	75 07                	jne    1722 <phase_4+0x68> ; ret == 0x7, or boom!
+    171b:	83 7c 24 08 07       	cmpl   $0x7,0x8(%esp); 0x7 == 0x8(%esp), then win!
     1720:	74 05                	je     1727 <phase_4+0x6d>
     1722:	e8 5c 04 00 00       	call   1b83 <explode_bomb>
     1727:	8b 44 24 0c          	mov    0xc(%esp),%eax
