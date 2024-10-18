@@ -620,7 +620,7 @@ Disassembly of section .text:
     1740:	83 ec 20             	sub    $0x20,%esp
     1743:	e8 f8 fa ff ff       	call   1240 <__x86.get_pc_thunk.bx>
     1748:	81 c3 1c 48 00 00    	add    $0x481c,%ebx
-    174e:	8b 74 24 2c          	mov    0x2c(%esp),%esi
+    174e:	8b 74 24 2c          	mov    0x2c(%esp),%esi ;my input
     1752:	65 a1 14 00 00 00    	mov    %gs:0x14,%eax
     1758:	89 44 24 18          	mov    %eax,0x18(%esp)
     175c:	31 c0                	xor    %eax,%eax
@@ -628,16 +628,16 @@ Disassembly of section .text:
     175f:	e8 e9 02 00 00       	call   1a4d <string_length>
     1764:	83 c4 10             	add    $0x10,%esp
     1767:	83 f8 06             	cmp    $0x6,%eax
-    176a:	75 55                	jne    17c1 <phase_5+0x83>
+    176a:	75 55                	jne    17c1 <phase_5+0x83>;bomb
     176c:	b8 00 00 00 00       	mov    $0x0,%eax
     1771:	8d 8b 64 d2 ff ff    	lea    -0x2d9c(%ebx),%ecx
-    1777:	0f b6 14 06          	movzbl (%esi,%eax,1),%edx
+    1777:	0f b6 14 06          	movzbl (%esi,%eax,1),%edx;loop begin
     177b:	83 e2 0f             	and    $0xf,%edx
     177e:	0f b6 14 11          	movzbl (%ecx,%edx,1),%edx
     1782:	88 54 04 05          	mov    %dl,0x5(%esp,%eax,1)
     1786:	83 c0 01             	add    $0x1,%eax
     1789:	83 f8 06             	cmp    $0x6,%eax
-    178c:	75 e9                	jne    1777 <phase_5+0x39>
+    178c:	75 e9                	jne    1777 <phase_5+0x39>;loop end
     178e:	c6 44 24 0b 00       	movb   $0x0,0xb(%esp)
     1793:	83 ec 08             	sub    $0x8,%esp
     1796:	8d 83 3a d2 ff ff    	lea    -0x2dc6(%ebx),%eax
@@ -647,7 +647,7 @@ Disassembly of section .text:
     17a2:	e8 c4 02 00 00       	call   1a6b <strings_not_equal>
     17a7:	83 c4 10             	add    $0x10,%esp
     17aa:	85 c0                	test   %eax,%eax
-    17ac:	75 1a                	jne    17c8 <phase_5+0x8a>
+    17ac:	75 1a                	jne    17c8 <phase_5+0x8a>;bomb!
     17ae:	8b 44 24 0c          	mov    0xc(%esp),%eax
     17b2:	65 2b 05 14 00 00 00 	sub    %gs:0x14,%eax
     17b9:	75 14                	jne    17cf <phase_5+0x91>
@@ -684,62 +684,62 @@ Disassembly of section .text:
     1811:	eb 23                	jmp    1836 <phase_6+0x62>
     1813:	e8 6b 03 00 00       	call   1b83 <explode_bomb>
     1818:	eb 30                	jmp    184a <phase_6+0x76>
-    181a:	83 c6 01             	add    $0x1,%esi
+    181a:	83 c6 01             	add    $0x1,%esi;loop2
     181d:	83 fe 06             	cmp    $0x6,%esi
-    1820:	74 0f                	je     1831 <phase_6+0x5d>
-    1822:	8b 44 b5 00          	mov    0x0(%ebp,%esi,4),%eax
+    1820:	74 0f                	je     1831 <phase_6+0x5d>;break
+    1822:	8b 44 b5 00          	mov    0x0(%ebp,%esi,4),%eax ;loop begin jump
     1826:	39 07                	cmp    %eax,(%edi)
-    1828:	75 f0                	jne    181a <phase_6+0x46>
+    1828:	75 f0                	jne    181a <phase_6+0x46>; not equal, or bomb
     182a:	e8 54 03 00 00       	call   1b83 <explode_bomb>
     182f:	eb e9                	jmp    181a <phase_6+0x46>
-    1831:	83 44 24 08 04       	addl   $0x4,0x8(%esp)
-    1836:	8b 44 24 08          	mov    0x8(%esp),%eax
+    1831:	83 44 24 08 04       	addl   $0x4,0x8(%esp) ; last time
+    1836:	8b 44 24 08          	mov    0x8(%esp),%eax ;first time
     183a:	89 c7                	mov    %eax,%edi
     183c:	8b 00                	mov    (%eax),%eax
     183e:	89 44 24 0c          	mov    %eax,0xc(%esp)
     1842:	83 e8 01             	sub    $0x1,%eax
     1845:	83 f8 05             	cmp    $0x5,%eax
-    1848:	77 c9                	ja     1813 <phase_6+0x3f>
-    184a:	83 44 24 04 01       	addl   $0x1,0x4(%esp)
+    1848:	77 c9                	ja     1813 <phase_6+0x3f>;bomb
+    184a:	83 44 24 04 01       	addl   $0x1,0x4(%esp) ;jumpin
     184f:	8b 74 24 04          	mov    0x4(%esp),%esi
     1853:	83 fe 05             	cmp    $0x5,%esi
-    1856:	7e ca                	jle    1822 <phase_6+0x4e>
+    1856:	7e ca                	jle    1822 <phase_6+0x4e>;loop end, check per!
     1858:	be 00 00 00 00       	mov    $0x0,%esi
-    185d:	89 f7                	mov    %esi,%edi
-    185f:	8b 4c b4 1c          	mov    0x1c(%esp,%esi,4),%ecx
+    185d:	89 f7                	mov    %esi,%edi ;loop beg
+    185f:	8b 4c b4 1c          	mov    0x1c(%esp,%esi,4),%ecx; ecx -> val
     1863:	b8 01 00 00 00       	mov    $0x1,%eax
     1868:	8d 93 68 01 00 00    	lea    0x168(%ebx),%edx
     186e:	83 f9 01             	cmp    $0x1,%ecx
-    1871:	7e 0a                	jle    187d <phase_6+0xa9>
-    1873:	8b 52 08             	mov    0x8(%edx),%edx
+    1871:	7e 0a                	jle    187d <phase_6+0xa9>; == 1 jump
+    1873:	8b 52 08             	mov    0x8(%edx),%edx ; for link, the val_th node
     1876:	83 c0 01             	add    $0x1,%eax
-    1879:	39 c8                	cmp    %ecx,%eax
-    187b:	75 f6                	jne    1873 <phase_6+0x9f>
+    1879:	39 c8                	cmp    %ecx,%eax ;loop val - 1 times
+    187b:	75 f6                	jne    1873 <phase_6+0x9f>; small loop, edx = edx + (val - 1) * 8
     187d:	89 54 bc 34          	mov    %edx,0x34(%esp,%edi,4)
     1881:	83 c6 01             	add    $0x1,%esi
     1884:	83 fe 06             	cmp    $0x6,%esi
-    1887:	75 d4                	jne    185d <phase_6+0x89>
-    1889:	8b 74 24 34          	mov    0x34(%esp),%esi
-    188d:	8b 44 24 38          	mov    0x38(%esp),%eax
-    1891:	89 46 08             	mov    %eax,0x8(%esi)
-    1894:	8b 54 24 3c          	mov    0x3c(%esp),%edx
-    1898:	89 50 08             	mov    %edx,0x8(%eax)
-    189b:	8b 44 24 40          	mov    0x40(%esp),%eax
+    1887:	75 d4                	jne    185d <phase_6+0x89> ;loop end
+    1889:	8b 74 24 34          	mov    0x34(%esp),%esi ;arr[1]
+    188d:	8b 44 24 38          	mov    0x38(%esp),%eax ;arr[2]
+    1891:	89 46 08             	mov    %eax,0x8(%esi) ;node[arr[1]]->node[arr[2]]
+    1894:	8b 54 24 3c          	mov    0x3c(%esp),%edx ;arr[3]
+    1898:	89 50 08             	mov    %edx,0x8(%eax) ;node[arr[2]]->node[arr[3]]
+    189b:	8b 44 24 40          	mov    0x40(%esp),%eax ;arr[4]
     189f:	89 42 08             	mov    %eax,0x8(%edx)
-    18a2:	8b 54 24 44          	mov    0x44(%esp),%edx
+    18a2:	8b 54 24 44          	mov    0x44(%esp),%edx ;arr[5]
     18a6:	89 50 08             	mov    %edx,0x8(%eax)
-    18a9:	8b 44 24 48          	mov    0x48(%esp),%eax
+    18a9:	8b 44 24 48          	mov    0x48(%esp),%eax ;arr[6]
     18ad:	89 42 08             	mov    %eax,0x8(%edx)
     18b0:	c7 40 08 00 00 00 00 	movl   $0x0,0x8(%eax)
     18b7:	bf 05 00 00 00       	mov    $0x5,%edi
-    18bc:	eb 08                	jmp    18c6 <phase_6+0xf2>
+    18bc:	eb 08                	jmp    18c6 <phase_6+0xf2> ; go in loop
     18be:	8b 76 08             	mov    0x8(%esi),%esi
     18c1:	83 ef 01             	sub    $0x1,%edi
-    18c4:	74 10                	je     18d6 <phase_6+0x102>
+    18c4:	74 10                	je     18d6 <phase_6+0x102> ;win!
     18c6:	8b 46 08             	mov    0x8(%esi),%eax
     18c9:	8b 00                	mov    (%eax),%eax
     18cb:	39 06                	cmp    %eax,(%esi)
-    18cd:	7d ef                	jge    18be <phase_6+0xea>
+    18cd:	7d ef                	jge    18be <phase_6+0xea> ;jump, or bomb!
     18cf:	e8 af 02 00 00       	call   1b83 <explode_bomb>
     18d4:	eb e8                	jmp    18be <phase_6+0xea>
     18d6:	8b 44 24 4c          	mov    0x4c(%esp),%eax
@@ -756,33 +756,33 @@ Disassembly of section .text:
 000018f0 <fun7>:
     18f0:	53                   	push   %ebx
     18f1:	83 ec 08             	sub    $0x8,%esp
-    18f4:	8b 54 24 10          	mov    0x10(%esp),%edx
-    18f8:	8b 4c 24 14          	mov    0x14(%esp),%ecx
+    18f4:	8b 54 24 10          	mov    0x10(%esp),%edx;address
+    18f8:	8b 4c 24 14          	mov    0x14(%esp),%ecx;val
     18fc:	85 d2                	test   %edx,%edx
-    18fe:	74 3a                	je     193a <fun7+0x4a>
-    1900:	8b 1a                	mov    (%edx),%ebx
+    18fe:	74 3a                	je     193a <fun7+0x4a>; == 0 or not
+    1900:	8b 1a                	mov    (%edx),%ebx;val of address
     1902:	39 cb                	cmp    %ecx,%ebx
     1904:	7f 0c                	jg     1912 <fun7+0x22>
     1906:	b8 00 00 00 00       	mov    $0x0,%eax
     190b:	75 18                	jne    1925 <fun7+0x35>
-    190d:	83 c4 08             	add    $0x8,%esp
+    190d:	83 c4 08             	add    $0x8,%esp ;val == val(add), return 0
     1910:	5b                   	pop    %ebx
     1911:	c3                   	ret
-    1912:	83 ec 08             	sub    $0x8,%esp
+    1912:	83 ec 08             	sub    $0x8,%esp ;val > val(add)
     1915:	51                   	push   %ecx
     1916:	ff 72 04             	push   0x4(%edx)
-    1919:	e8 d2 ff ff ff       	call   18f0 <fun7>
+    1919:	e8 d2 ff ff ff       	call   18f0 <fun7> ;fun7(ch[edx][0], val)
     191e:	83 c4 10             	add    $0x10,%esp
     1921:	01 c0                	add    %eax,%eax
-    1923:	eb e8                	jmp    190d <fun7+0x1d>
-    1925:	83 ec 08             	sub    $0x8,%esp
+    1923:	eb e8                	jmp    190d <fun7+0x1d> ;return 2 * ret;
+    1925:	83 ec 08             	sub    $0x8,%esp ;val < val(add)
     1928:	51                   	push   %ecx
-    1929:	ff 72 08             	push   0x8(%edx)
+    1929:	ff 72 08             	push   0x8(%edx) ;fun7*ch[edx][1], val)
     192c:	e8 bf ff ff ff       	call   18f0 <fun7>
     1931:	83 c4 10             	add    $0x10,%esp
-    1934:	8d 44 00 01          	lea    0x1(%eax,%eax,1),%eax
-    1938:	eb d3                	jmp    190d <fun7+0x1d>
-    193a:	b8 ff ff ff ff       	mov    $0xffffffff,%eax
+    1934:	8d 44 00 01          	lea    0x1(%eax,%eax,1),%eax ; return 2 * ret + 1
+    1938:	eb d3                	jmp    190d <fun7+0x1d> ;return
+    193a:	b8 ff ff ff ff       	mov    $0xffffffff,%eax;adress == 0
     193f:	eb cc                	jmp    190d <fun7+0x1d>
 
 00001941 <secret_phase>:
@@ -796,20 +796,20 @@ Disassembly of section .text:
     1959:	6a 0a                	push   $0xa
     195b:	6a 00                	push   $0x0
     195d:	50                   	push   %eax
-    195e:	e8 4d f8 ff ff       	call   11b0 <strtol@plt>
+    195e:	e8 4d f8 ff ff       	call   11b0 <strtol@plt>;change to int
     1963:	89 c6                	mov    %eax,%esi
     1965:	8d 40 ff             	lea    -0x1(%eax),%eax
     1968:	83 c4 10             	add    $0x10,%esp
-    196b:	3d e8 03 00 00       	cmp    $0x3e8,%eax
-    1970:	77 32                	ja     19a4 <secret_phase+0x63>
+    196b:	3d e8 03 00 00       	cmp    $0x3e8,%eax // eax - 1 <= 1000
+    1970:	77 32                	ja     19a4 <secret_phase+0x63>;bomb
     1972:	83 ec 08             	sub    $0x8,%esp
     1975:	56                   	push   %esi
     1976:	8d 83 14 01 00 00    	lea    0x114(%ebx),%eax
     197c:	50                   	push   %eax
-    197d:	e8 6e ff ff ff       	call   18f0 <fun7>
+    197d:	e8 6e ff ff ff       	call   18f0 <fun7> ; fun7(address, val), return 7
     1982:	83 c4 10             	add    $0x10,%esp
     1985:	83 f8 07             	cmp    $0x7,%eax
-    1988:	75 21                	jne    19ab <secret_phase+0x6a>
+    1988:	75 21                	jne    19ab <secret_phase+0x6a>;bomb
     198a:	83 ec 0c             	sub    $0xc,%esp
     198d:	8d 83 14 d2 ff ff    	lea    -0x2dec(%ebx),%eax
     1993:	50                   	push   %eax
@@ -1126,7 +1126,7 @@ Disassembly of section .text:
     1d43:	74 16                	je     1d5b <phase_defused+0x3a>
     1d45:	8b 44 24 5c          	mov    0x5c(%esp),%eax
     1d49:	65 2b 05 14 00 00 00 	sub    %gs:0x14,%eax
-    1d50:	0f 85 88 00 00 00    	jne    1dde <phase_defused+0xbd>
+    1d50:	0f 85 88 00 00 00    	jne    1dde <phase_defused+0xbd>;fail
     1d56:	83 c4 68             	add    $0x68,%esp
     1d59:	5b                   	pop    %ebx
     1d5a:	c3                   	ret
