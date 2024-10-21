@@ -546,7 +546,7 @@ Disassembly of section .text:
     1675:	c1 eb 1f             	shr    $0x1f,%ebx ; get sign dig of edx
     1678:	01 d3                	add    %edx,%ebx ; remove the sign dig
     167a:	d1 fb                	sar    $1,%ebx ;ebx = edx / 2
-    167c:	03 5c 24 14          	add    0x14(%esp),%ebx ;ebx += arg2, = edx / 2 + arg2
+    167c:	03 5c 24 14          	add    0x14(%esp),%ebx ;ebx += arg2, = edx / 2 + arg2, mid
     1680:	39 c3                	cmp    %eax,%ebx;
     1682:	7f 09                	jg     168d <func4+0x2c>
     1684:	7c 1f                	jl     16a5 <func4+0x44>
