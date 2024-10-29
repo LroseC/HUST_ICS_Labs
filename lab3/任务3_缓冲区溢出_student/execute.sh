@@ -1,1 +1,1 @@
-./bufbomb U202315064 ans0.in 0
+./bufbomb U202315064 ans2.in 2
